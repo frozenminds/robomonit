@@ -21,7 +21,7 @@
 package cmd
 
 import (
-	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -44,7 +44,7 @@ The current working example is a RaspberryPi blinking LED's when certain pattern
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(-1)
 	}
 }
@@ -58,7 +58,6 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	fmt.Println("CfgFile: ", cfgFile)
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile)
 	}
@@ -67,12 +66,10 @@ func initConfig() {
 	viper.AddConfigPath(".")         // adding current directory as first search path
 	viper.AddConfigPath("$HOME")     // adding home directory as backup search path
 	viper.AddConfigPath("/etc/")     // adding /etc/ directory as backup search path
-	//	viper.AutomaticEnv()                  // read in environment variables that match
+	viper.AutomaticEnv()             // read in environment variables that match
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		log.Println("Using config file:", viper.ConfigFileUsed())
 	}
-	err := viper.ReadInConfig()
-	fmt.Println(err)
 }
