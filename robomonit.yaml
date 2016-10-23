@@ -1,0 +1,13 @@
+timeouts:
+  blink: "200"
+pins:
+  hit: "15"
+  bypass: "16"
+  miss: "18"
+  error: "29"
+
+patterns:
+  hit: ^\[HIT\].*"[A-Z]+\s\/[^fpc]
+  bypass: ^\[BYPASS\]
+  miss: ^\[MISS\]
+  error: ^\[MISS\]
