@@ -20,12 +20,8 @@
 
 package machine
 
-import "github.com/hybridgroup/gobot"
-
 // Machine interface
 type Machine interface {
-	// Get name
-	Name() string
 
 	// Start machine
 	Start() []error
@@ -39,6 +35,6 @@ type Machine interface {
 	// Add work
 	Work(func())
 
-	// Get device
-	Device(string) gobot.Device
+	// Execute default action
+	DefaultAction(identifier string)
 }

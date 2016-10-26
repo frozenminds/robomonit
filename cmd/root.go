@@ -28,7 +28,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
+var (
+	config string
+)
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -52,14 +54,14 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "Config file (default is ./robomonit.yaml, falling back to $HOME/robomonit.yaml and /etc/robomonit.yaml).")
+	RootCmd.PersistentFlags().StringVar(&config, "config", "", "Config file (default is ./robomonit.yaml, falling back to $HOME/robomonit.yaml and /etc/robomonit.yaml).")
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle.")
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
-		viper.SetConfigFile(cfgFile)
+	if config != "" {
+		viper.SetConfigFile(config)
 	}
 
 	viper.SetConfigName("robomonit") // name of config file (without extension)

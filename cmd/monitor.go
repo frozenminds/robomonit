@@ -21,58 +21,63 @@
 package cmd
 
 import (
+	"errors"
 	"os"
-	"time"
 
-	"github.com/frozenminds/robomonit/machine/raspi"
+	"github.com/frozenminds/robomonit/machine"
 	"github.com/frozenminds/robomonit/monitor"
 
-	"github.com/hybridgroup/gobot/platforms/gpio"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-// pipeCmd represents the monitor command
-var pipeCmd = &cobra.Command{
-	Use:   "pipe",
+// monitorCmd represents the monitor command
+var monitorCmd = &cobra.Command{
+	Use:   "monitor",
 	Short: "Piped data monitoring.",
 	Long:  `Read data from a pipe and transform it into hardware commands.`,
+	// Error Handling
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+
+		platforms := platforms()
+		if len(platforms) == 0 {
+			return errors.New("No platforms defined in configuration file.")
+		}
+
+		patterns := patterns()
+		if len(patterns) == 0 {
+			return errors.New("No patterns defined in configuration file.")
+		}
+		return nil
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 
-		pins := pins()
+		platforms := platforms()
 		patterns := patterns()
 
-		machine := raspi.NewRaspiDirectLed(pins)
+		m := machine.NewMachineFromConfig(platforms)
+		m.Reset()
 
 		work := func() {
-
-			machine.Reset()
-
-			action := func(pin string) {
-				device := machine.Device(pin).(*gpio.DirectPinDriver)
-
-				device.On()
-
-				time.Sleep(300 * time.Millisecond)
-				device.Off()
+			action := func(id string) {
+				m.DefaultAction(id)
 			}
 
 			monitor.Monitor(os.Stdin, patterns, action)
 		}
-
-		machine.Work(work)
-		defer machine.Stop()
-		machine.Start()
+		m.Work(work)
+		m.Start()
 	},
 }
 
 func init() {
-	RootCmd.AddCommand(pipeCmd)
+
+	RootCmd.AddCommand(monitorCmd)
 }
 
-// Get pins
-func pins() map[string]string {
-	return viper.GetStringMapString("pins")
+// Get platforms
+func platforms() map[string]interface{} {
+	return viper.GetStringMap("platforms")
 }
 
 // Get patterns

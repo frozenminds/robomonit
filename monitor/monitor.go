@@ -31,9 +31,9 @@ func Monitor(reader io.Reader, patterns map[string]string, action func(string)) 
 	scanner := bufio.NewScanner(reader)
 
 	for scanner.Scan() {
-		for pin, pattern := range patterns {
+		for device, pattern := range patterns {
 			if match(pattern, scanner.Text()) {
-				action(pin)
+				action(device)
 			}
 		}
 	}
