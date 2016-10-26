@@ -22,7 +22,10 @@ package cmd
 
 import (
 	"errors"
+	DEATH "github.com/vrecan/death"
+	"io"
 	"os"
+	SYS "syscall"
 
 	"github.com/frozenminds/robomonit/machine"
 	"github.com/frozenminds/robomonit/monitor"
@@ -52,12 +55,17 @@ var monitorCmd = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 
+		// Signals to end app
+		death := DEATH.NewDeath(SYS.SIGINT, SYS.SIGTERM)
+		close := make([]io.Closer, 0)
+
 		platforms := platforms()
 		patterns := patterns()
 
 		m := machine.NewMachineFromConfig(platforms)
-		m.Reset()
+		close = append(close, m)
 
+		m.Reset()
 		work := func() {
 			action := func(id string) {
 				m.DefaultAction(id)
@@ -67,6 +75,8 @@ var monitorCmd = &cobra.Command{
 		}
 		m.Work(work)
 		m.Start()
+
+		death.WaitForDeath(close...)
 	},
 }
 

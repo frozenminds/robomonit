@@ -21,6 +21,7 @@
 package machine
 
 import (
+	"io"
 	"log"
 	"strings"
 	"time"
@@ -44,6 +45,9 @@ type MachineFactory struct {
 
 // Make sure MachineFactory implements Machine
 var _ Machine = (*MachineFactory)(nil)
+
+// Make sure MachineFactory implements io.Closer
+var _ io.Closer = (*MachineFactory)(nil)
 
 // NewMachineFromConfig will return an instance of Machine from the usual configurations.
 // For more control, safety, drivers and so on, please create your own implementation.
@@ -114,6 +118,11 @@ func (m *MachineFactory) Stop() []error {
 	return m.Gobot.Stop()
 }
 
+func (m *MachineFactory) Close() error {
+	m.Stop()
+	return nil
+}
+
 // Reset
 func (m *MachineFactory) Reset() {
 
@@ -161,21 +170,24 @@ func (m *MachineFactory) DefaultAction(identifier string) {
 	// Will probably switch to local driver implementation (machine/driver.go).
 	switch device.(type) {
 	case *gpio.DirectPinDriver:
-		d := device.(*gpio.DirectPinDriver)
 
-		d.On()
-		sleep()
-		d.Off()
-
+		action := func(d *gpio.DirectPinDriver) {
+			d.On()
+			sleep()
+			d.Off()
+		}
+		go action(device.(*gpio.DirectPinDriver))
 		break
 
 	case *gpio.LedDriver:
-		d := device.(*gpio.LedDriver)
 
-		d.On()
-		sleep()
-		d.Off()
+		action := func(d *gpio.LedDriver) {
+			d.On()
+			sleep()
+			d.Off()
+		}
 
+		go action(device.(*gpio.LedDriver))
 		break
 	}
 }
@@ -222,5 +234,5 @@ func keyInSlice(search []string, idx int) bool {
 
 // Sleep
 func sleep() {
-	time.Sleep(500 * time.Millisecond)
+	time.Sleep(300 * time.Millisecond)
 }

@@ -20,8 +20,15 @@
 
 package main
 
-import "github.com/frozenminds/robomonit/cmd"
+import (
+	"runtime"
+
+	"github.com/frozenminds/robomonit/cmd"
+)
 
 func main() {
+	// Use all CPU's
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	cmd.Execute()
 }
