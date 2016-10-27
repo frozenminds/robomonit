@@ -8,6 +8,12 @@ Pipe your data into `RoboMonit` and let it control your hardware when defined pa
 
 `RoboMonit` is powered by [GoBot](https://gobot.io/), so you'll have support for a lot of [platforms](https://gobot.io/documentation/platforms/) like *Raspberry Pi*, *Arduino*, *Beaglebone*, *Edison* and why not drones. Blink LED's, move your *Sphero* or sound an alarm.
 
+## Demos
+
+[![youtube](https://img.youtube.com/vi/GOLYtBZ0GkQ/0.jpg)](https://youtu.be/GOLYtBZ0GkQ)
+
+[![asciicast](https://asciinema.org/a/5yv6ckqzf19mamymhw6gkwdyb.png?size=small)](https://asciinema.org/a/5yv6ckqzf19mamymhw6gkwdyb)
+
 ### Requirements
 
 - Golang for ARM: https://github.com/golang/go/wiki/GoArm
