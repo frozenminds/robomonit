@@ -63,7 +63,6 @@ func NewMachineFromConfig(config map[string]interface{}) *MachineFactory {
 	}
 
 	for name, drivers := range config {
-		log.Println(drivers)
 
 		var adaptor gobot.Adaptor
 
@@ -202,7 +201,6 @@ func (m *MachineFactory) AddDevicesFromConfig(devices map[string]interface{}) {
 
 // Add device from configuration
 func (m *MachineFactory) AddDeviceFromConfig(name string, config map[string]string) {
-	log.Println("Func MachineFactory.AddDeviceFromConfig() has only a limited set of drivers implemented!")
 
 	m.Gobot.Robots().Each(func(robot *gobot.Robot) {
 
